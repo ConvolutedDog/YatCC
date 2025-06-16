@@ -4,12 +4,12 @@ set(STUDENT_ID "0123456789")
 set(STUDENT_NAME "某某某")
 
 # 实验一的完成方式："flex"或"antlr"
-set(TASK1_WITH "flex")
+set(TASK1_WITH "antlr")
 # 实验一的日志级别，级别从低到高为0-3
 set(TASK1_LOG_LEVEL 3)
 
 # 实验二的完成方式："bison"或"antlr"
-set(TASK2_WITH "bison")
+set(TASK2_WITH "antlr")
 # 是否在实验二复活，ON或OFF
 set(TASK2_REVIVE ON)
 # 实验二的日志级别，级别从低到高为0-3
@@ -35,8 +35,9 @@ else()
   set(_antlr_dir "${CMAKE_SOURCE_DIR}/antlr")
 endif()
 message("ANTLR目录为 ${_antlr_dir}")
-set(antlr4-runtime_DIR "${_antlr_dir}/install/lib/cmake/antlr4-runtime")
-set(antlr4-generator_DIR "${_antlr_dir}/install/lib/cmake/antlr4-generator")
+
+set(antlr4-runtime_DIR "${_antlr_dir}/install/lib64/cmake/antlr4-runtime")
+set(antlr4-generator_DIR "${_antlr_dir}/install/lib64/cmake/antlr4-generator")
 set(ANTLR4_JAR_LOCATION "${_antlr_dir}/antlr.jar")
 
 # LLVM 和 Clang
@@ -46,10 +47,10 @@ else()
   set(_llvm_dir "${CMAKE_SOURCE_DIR}/llvm")
 endif()
 message("LLVM目录为 ${_llvm_dir}")
-set(LLVM_DIR "${_llvm_dir}/install/lib/cmake/llvm")
-set(LLVM_INSTALL_DIR "${_llvm_dir}/install")
-set(CLANG_EXECUTABLE "${_llvm_dir}/install/bin/clang")
-set(CLANG_PLUS_EXECUTABLE "${_llvm_dir}/install/bin/clang++")
+set(LLVM_DIR "${_llvm_dir}/lib/cmake/llvm")
+set(LLVM_INSTALL_DIR "${_llvm_dir}/")
+set(CLANG_EXECUTABLE "${_llvm_dir}/bin/clang")
+set(CLANG_PLUS_EXECUTABLE "${_llvm_dir}/bin/clang++")
 
 # PYBIND11
 if(DEFINED ENV{YatCC_PYBIND11_DIR})

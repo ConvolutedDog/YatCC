@@ -1,5 +1,8 @@
-find_package(FLEX 2.6)
-find_package(BISON 3.8)
+find_package(FLEX 2.5.37)
+find_package(BISON 3.0.4)
+
+# 设置 antlr4-generator 的路径
+set(antlr4-generator_DIR "../antlr/install/lib64/cmake/antlr4-generator")
 
 find_package(antlr4-runtime 4.13)
 find_package(antlr4-generator 4.13)
@@ -14,7 +17,11 @@ target_include_directories(LLVM SYSTEM AFTER INTERFACE
 target_link_directories(LLVM INTERFACE ${LLVM_INSTALL_DIR}/lib)
 target_compile_definitions(LLVM INTERFACE
   -D_GNU_SOURCE -D_DEBUG -D_GLIBCXX_ASSERTIONS -D__STDC_CONSTANT_MACROS)
-target_link_libraries(LLVM INTERFACE libLLVM.so)
+# target_link_libraries(LLVM INTERFACE libLLVM.so)
+find_package(LLVM REQUIRED CONFIG)
+target_link_libraries(LLVM INTERFACE LLVM
+  LLVMRemarks
+)
 
 macro(add_task task)
   if(NOT STUDENT_ID STREQUAL "" OR NOT STUDENT_NAME STREQUAL "")

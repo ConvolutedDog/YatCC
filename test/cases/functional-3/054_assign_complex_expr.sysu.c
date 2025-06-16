@@ -1,4 +1,5 @@
 #include <sysy/sylib.h>
+#include <sysu/stdio.h>
 // Use complex expression in assign structure
 int main () {
     int a;
@@ -15,5 +16,6 @@ int main () {
     result = ((d % 2 + 67) + -(a - b) - -((c + 2) % 2));
     result = result + 3;
     putint(result);
+    sysu_putchar(result);
     return 0;
 }

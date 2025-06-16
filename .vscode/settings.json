@@ -4,6 +4,7 @@
   "files.eol": "\n",
   "files.autoSave": "afterDelay",
   "files.associations": {
+    "*.cu": "cpp",
     "*.json": "jsonc",
     "TODO": "markdown",
     ".clang-tidy": "yaml",
@@ -82,7 +83,15 @@
     "cinttypes": "cpp",
     "typeindex": "cpp",
     "typeinfo": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "strstream": "cpp",
+    "cfenv": "cpp",
+    "codecvt": "cpp",
+    "forward_list": "cpp",
+    "unordered_set": "cpp",
+    "ranges": "cpp",
+    "valarray": "cpp",
+    "stdio.h": "c"
   },
 
   //* C/C++
@@ -95,5 +104,9 @@
     "editor.formatOnType": true
   },
   "flake8.args": ["--ignore=E203,W503", "--max-line-length=88"],
-  "autoDocstring.docstringFormat": "one-line-sphinx"
+  "autoDocstring.docstringFormat": "one-line-sphinx",
+
+  "clangd.arguments": [
+    "--compile-commands-dir=build"
+  ],
 }

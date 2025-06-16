@@ -22,7 +22,57 @@ std::unordered_map<std::string, std::string> tokenTypeMapping = {
   { "Comma", "comma" },
 
   // 在这里继续添加其他映射
+  { "While", "while" },
+  { "Less", "less" },
+  { "Greater", "greater" },
+  { "Minus", "minus" },
+  { "If", "if" },
+  { "Star", "star" },
+  { "EqualEqual", "equalequal" },
+  { "Void", "void" },
+  { "PipePipe", "pipepipe" },
+  { "Else", "else" },
+  { "AmpAmp", "ampamp" },
+  { "Slash", "slash" },
+  { "Percent", "percent" },
+  { "LessEqual", "lessequal" },
+  { "GreaterEqual", "greaterequal" },
+  { "Exclaim", "exclaim" },
+  { "ExclaimEqual", "exclaimequal" },
+  { "Const", "const" },
+  { "Char", "char" },
+  { "Break", "break" },
+  { "Continue", "continue" },
 };
+
+static int lastLine = -1;
+static int lastColumn = -1;
+static int lastLength = -1;
+
+static int nextLine = 0;
+static std::string nextFileName = "";
+static int nextflag = 0;
+
+std::string
+get_quoted_strings(const std::string& input)
+{
+  std::string quotedStrings;
+  size_t start = 0;
+
+  start = input.find('"', start);
+  if (start == std::string::npos)
+    return quotedStrings;
+
+  size_t end = input.find('"', start + 1);
+  if (end == std::string::npos)
+    return quotedStrings;
+
+  quotedStrings = input.substr(start + 1, end - start - 1);
+
+  return quotedStrings;
+}
+
+#include <regex>
 
 void
 print_token(const antlr4::Token* token,
@@ -41,21 +91,69 @@ print_token(const antlr4::Token* token,
   if (tokenTypeMapping.find(tokenTypeName) != tokenTypeMapping.end()) {
     tokenTypeName = tokenTypeMapping[tokenTypeName];
   }
-  std::string locInfo = " Loc=<0:0>";
 
-  bool startOfLine = false;
-  bool leadingSpace = false;
+  if (token->getChannel() == antlr4::Token::HIDDEN_CHANNEL &&
+      tokenTypeName != "Whitespace" && tokenTypeName != "Newline") {
+    std::string text = token->getText();
+    std::regex pattern1("# ([0-9]+) \"");
+    std::smatch match1;
+    if (std::regex_search(text, match1, pattern1)) {
+      nextLine = std::stoi(match1[1]);
+    }
 
-  if (token->getText() != "<EOF>")
-    outFile << tokenTypeName << " '" << token->getText() << "'";
-  else
-    outFile << tokenTypeName << " '"
-            << "'";
-  if (startOfLine)
-    outFile << "\t [StartOfLine]";
-  if (leadingSpace)
-    outFile << " [LeadingSpace]";
-  outFile << locInfo << std::endl;
+    nextFileName = get_quoted_strings(text);
+
+    std::regex pattern2("\" ([1-4]+)");
+    std::smatch match2;
+    nextflag = 0;
+    if (std::regex_search(text, match2, pattern2)) {
+      nextflag = std::stoi(match2[1]);
+    }
+  }
+
+  std::string locInfo;
+  if (token->getChannel() == antlr4::Token::DEFAULT_CHANNEL) {
+
+    bool startOfLine = false;
+    bool leadingSpace = false;
+
+    if (token->getLine() != lastLine) {
+      if (tokenTypeName != "eof") {
+        startOfLine = true;
+        lastLine = token->getLine();
+      } else {
+        lastLine = -1;
+      }
+    }
+
+    if (startOfLine)
+      leadingSpace = token->getCharPositionInLine() > 0;
+    else {
+      leadingSpace = token->getCharPositionInLine() > lastColumn + lastLength;
+    }
+
+    locInfo = std::string(" Loc=<") + nextFileName + ":" +
+              std::to_string(nextLine - 1) + ":" +
+              std::to_string(token->getCharPositionInLine() + 1) + ">";
+
+    lastColumn = token->getCharPositionInLine();
+    lastLength = token->getText().length();
+
+    if (token->getText() != "<EOF>")
+      outFile << tokenTypeName << " '" << token->getText() << "'";
+    else
+      outFile << tokenTypeName << " '"
+              << "'";
+    if (startOfLine)
+      outFile << "\t [StartOfLine]";
+    if (leadingSpace)
+      outFile << " [LeadingSpace]";
+    outFile << locInfo << std::endl;
+  } else {
+    if (tokenTypeName == "Newline") {
+      nextLine++;
+    }
+  }
 }
 
 int

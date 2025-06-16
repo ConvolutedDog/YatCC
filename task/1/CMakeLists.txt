@@ -1,5 +1,5 @@
 include(config.cmake)
-
+message("antlr4-runtime_DIR: ${antlr4-runtime_DIR}")
 if(TASK1_WITH STREQUAL "flex")
   message(AUTHOR_WARNING "使用 Flex 完成实验一")
   add_subdirectory(flex)

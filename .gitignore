@@ -5,6 +5,8 @@ env.*
 **/.antlr
 **/__pycache__
 
+.cache/
+
 antlr/*
 !antlr/setup.sh
 llvm/*

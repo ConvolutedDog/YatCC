@@ -22,8 +22,15 @@ if [ ! -f cpp-runtime.zip ]; then
 fi
 
 unzip cpp-runtime.zip -d source
+find . -name "CMakeLists.txt" -type f -exec sed -i \
+    's|URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip|URL file:///home/yangjianchao/Github/YatCC/antlr/e2239ee6043f73722e7aa812a459f54a28552929.zip|g' \
+    {} +
+find . -type f -exec sed -i \
+    's|cmake_minimum_required(VERSION 3.5)|cmake_minimum_required(VERSION 3.5)|g' \
+    {} +
+
 mkdir build install
 cmake source -B build -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$(realpath install) \
-  -DANTLR4_INSTALL=ON
+  -DANTLR4_INSTALL=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 cmake --build build --target install
